@@ -1,6 +1,7 @@
 import sys
 from random import randint
 
+from PyQt5 import uic
 from PyQt5.QtGui import QPainter, QColor
 from PyQt5.QtWidgets import QWidget, QApplication, QPushButton
 
@@ -8,13 +9,7 @@ from PyQt5.QtWidgets import QWidget, QApplication, QPushButton
 class Example(QWidget):
     def __init__(self):
         super().__init__()
-        self.initUI()
-
-    def initUI(self):
-        self.setGeometry(300, 300, 200, 200)
-        self.setWindowTitle('Рисование')
-        self.btn = QPushButton('Рисовать', self)
-        self.btn.move(70, 150)
+        uic.loadUi('UI.ui', self)
         self.do_paint = False
         self.btn.clicked.connect(self.paint)
 
@@ -33,7 +28,6 @@ class Example(QWidget):
         qp.setBrush(QColor(255, 242, 0))
         x = randint(0, self.width() - 30)
         y = randint(0, self.height() - 30)
-        print(x, y)
         r = randint(20, min(self.width() - x, self.height() - y))
         qp.drawEllipse(x, y, r, r)
 
