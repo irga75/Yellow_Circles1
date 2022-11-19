@@ -1,41 +1,50 @@
 import sys
 from random import randint
 
-from PyQt5 import uic
-from PyQt5.QtCore import QPoint
 from PyQt5.QtGui import QPainter, QColor
-from PyQt5.QtWidgets import QWidget, QApplication
+from PyQt5.QtWidgets import QWidget, QApplication, QPushButton
 
 
 class Example(QWidget):
-    def __init__(self, *args):
-        super().__init__(*args)
-        uic.loadUi('UI.ui')
-        self.pushButton.clicked.connect(self.paintEvent)
+    def __init__(self):
+        super().__init__()
+        self.initUI()
 
-    # Метод срабатывает, когда виджету надо
-    # перерисовать свое содержимое,
-    # например, при создании формы
+    def initUI(self):
+        self.setGeometry(300, 300, 200, 200)
+        self.setWindowTitle('Рисование')
+        self.btn = QPushButton('Рисовать', self)
+        self.btn.move(70, 150)
+        self.do_paint = False
+        self.btn.clicked.connect(self.paint)
+
     def paintEvent(self, event):
-        # Создаем объект QPainter для рисования
-        qp = QPainter()
-        # Начинаем процесс рисования
-        qp.begin(self)
-        self.draw_circle(qp)
-        # Завершаем рисование
-        qp.end()
+        if self.do_paint:
+            qp = QPainter()
+            qp.begin(self)
+            self.draw_flag(qp)
+            qp.end()
 
-    def draw_circle(self, qp):
-        # Задаем кисть
-        qp.setBrush(QColor(255, 0, 0))
-        # Рисуем прямоугольник заданной кистью
-        qp.setBrush(QColor(0, 255, 0))
-        r = randint(30, 500)
-        qp.drawEllipse(QPoint(randint(0, self.width()), randint(0, self.height())), r, r)
+    def paint(self):
+        self.do_paint = True
+        self.repaint()
+
+    def draw_flag(self, qp):
+        qp.setBrush(QColor(255, 242, 0))
+        x = randint(0, self.width() - 30)
+        y = randint(0, self.height() - 30)
+        print(x, y)
+        r = randint(20, min(self.width() - x, self.height() - y))
+        qp.drawEllipse(x, y, r, r)
+
+
+def except_hook(cls, exception, traceback):
+    sys.__excepthook__(cls, exception, traceback)
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = Example()
     ex.show()
+    sys.excepthook = except_hook
     sys.exit(app.exec())
